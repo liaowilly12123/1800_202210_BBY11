@@ -6,13 +6,12 @@
 
 ## General Info
 This browser based web application to ...
-<<<<<<< HEAD
 * Hi my name is Chris.
-=======
 
-Hi my name is Aryan Jand. I'm 
->>>>>>> 6c49ef8 (just finshed editing)
+* Hi my name is Aryan Jand. I'm 
 	
+* Hi my name is Willy. I'm excited about this project because it is tackling a problem I find interesting!
+
 ## Technologies
 Technologies used for this project:
 * HTML, CSS
