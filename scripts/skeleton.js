@@ -6,6 +6,7 @@ function loadComponentToId(nodeId, component) {
 
 function loadSkeleton() {
   loadComponentToId("#navbarPlaceholder", "./components/header.html");
+  loadComponentToId("#footerPlaceholder", "./components/footer.html");
 }
 
 loadSkeleton();
