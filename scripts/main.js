@@ -21,13 +21,15 @@ function populateEventList() {
 
         // convert hour from 24h to 12h format
         let hour = date.getHours();
+        
+        const ampm = hour < 12 ? 'am' : 'pm';
+
         hour = hour % 12;
         hour = hour ? hour : 12;
 
         // format minutes to have 2 digits
         let minutes = date.getMinutes();
         minutes = minutes < 10 ? `0${minutes}` : minutes;
-        const ampm = hour < 12 ? 'am' : 'pm';
         const time = `${hour}:${minutes} ${ampm}`;
 
         // date formatted
