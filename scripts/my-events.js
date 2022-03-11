@@ -12,7 +12,7 @@ function populateMyEventsList() {
 
             eventQuery.get()
               .then(eventDoc => {
-                createEventCards(eventDoc);
+                createEventCards(eventDoc, party.data().members);
               })
           })
         })
@@ -23,7 +23,7 @@ function populateMyEventsList() {
   })
 }
 
-function createEventCards(eventDoc) {
+function createEventCards(eventDoc, partyMembers) {
   const monthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
   ];
@@ -43,7 +43,7 @@ function createEventCards(eventDoc) {
 
   // convert hour from 24h to 12h format
   let hour = date.getHours();
-  
+
   const ampm = hour < 12 ? 'am' : 'pm';
 
   hour = hour % 12;
@@ -78,8 +78,26 @@ function createEventCards(eventDoc) {
   modal.querySelector(".modal-time").innerHTML = time;
   modal.querySelector(".modal-venue").innerHTML = venue;
 
-  modalGroup.appendChild(modal);  
+  let modalMember = modal.querySelector(".modal-members");
 
+  console.log(modal.querySelector(".modal-members"));
+
+  partyMembers.forEach(member => {
+    let memberQuery = db.collection("users").doc(member);
+    memberQuery.get()
+      .then(member => {
+        let memberName = member.data().name;
+        const para = document.createElement("p");
+        const node = document.createTextNode(memberName);
+        para.appendChild(node);
+        modalMember.appendChild(para)
+      })
+  })
+
+
+  modalGroup.appendChild(modal);
+
+  console.log(partyMembers);
 }
 
 // const parties = [{
