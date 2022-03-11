@@ -39,7 +39,6 @@ function populateEventList() {
 
         // Create Event Card
         let eventCard = eventCardTemplate.content.cloneNode(true);
-        console.log(eventCard.querySelector("a")["id"]);
 
         // eventCard.querySelector("a").id = eventID;
         eventCard.querySelector("a").setAttribute("data-bs-target", `#${eventID}`);
