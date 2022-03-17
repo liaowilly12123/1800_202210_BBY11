@@ -21,7 +21,7 @@ function populateEventList() {
 
         // convert hour from 24h to 12h format
         let hour = date.getHours();
-        
+
         const ampm = hour < 12 ? 'am' : 'pm';
 
         hour = hour % 12;
@@ -65,3 +65,44 @@ function populateEventList() {
 loadComponentToId("#eventCardTemplate", "./components/event-list-item.html");
 
 populateEventList();
+
+function createWatchParty() {
+  console.log("in")
+  var eventDate = document.getElementById("watchPartyStartDate").value;
+  var eventTime = document.getElementById("watchPartyStartTime").value;
+  var link = document.getElementById("watchPartyLink").value;
+  var eventID = document.querySelector(".modal").id;
+
+  console.log(eventDate, eventTime, link, eventID);
+  // what is this line of code doing here. Questions to ask: after the user creates a watch party the does it tske them to another togal or my events page.
+  const code = randomIntFromInterval(100000, 999999);
+
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      // var userID = db.collection("users").doc(user.uid)
+      var userID = user.uid;
+      //get the document for current user.
+      db.collection("parties").add({
+        code: code,
+        host: userID,
+        eventdate: eventDate,
+        eventtime: eventTime,
+        eventId: eventID,
+        members: [userID],
+        link: link,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        // window.location.href = "my-events.html"; //new line added
+      })
+
+    } else {
+      // No user is signed in.
+    }
+  });
+
+
+
+
+
+
+}
