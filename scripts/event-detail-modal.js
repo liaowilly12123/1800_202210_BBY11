@@ -1,5 +1,5 @@
 function loadModal() {
-  loadComponentToId("#modalPlaceholder", "./components/event-detail-modal.html");
+  loadComponentToId("#modalTemplate", "./components/event-detail-modal.html");
 }
 
 loadModal();

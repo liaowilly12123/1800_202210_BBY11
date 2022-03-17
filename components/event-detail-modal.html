@@ -1,10 +1,10 @@
 <!-- Modal -->
-<div class="modal fade" id="eventDetailModal" tabindex="-1" aria-labelledby="eventDetailModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
+<div class="modal fade" id="event-form-modal" tabindex="-1" aria-labelledby="event-form-modal-label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down	">
     <div class="modal-content">
       <!-- Modal Header -->
       <div class="px-4 pt-4 d-flex w-100 justify-content-between">
-        <h1 class="modal-title" id="eventDetailModalLabel">Snowboarding</h1>
+        <h1 class="modal-title" id="eventDetailModalLabel"></h1>
         <button type="button" class="btn-close my-auto" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
@@ -12,17 +12,31 @@
       <div class="modal-body px-4">
         <div>
           <i class="bi bi-calendar-event"></i>
-          February 22, 2022
+          <span class="modal-date"></span>
         </div>
         <div>
           <i class="bi bi-clock"></i>
-          11:00am - 12:30pm
+          <span class="modal-time"></span>
         </div>
         <div>
           <i class="bi bi-pin-map"></i>
-          Whistler
+          <span class="modal-venue"></span>
         </div>
 
+        <form class="mt-5">
+          <div class="mb-3">
+            <label for="watchPartyStartDate" class="form-label">Date</label>
+            <input type="date" class="form-control" id="watchPartyStartDate">
+          </div>
+          <div class="mb-3">
+            <label for="watchPartyStartTime" class="form-label">Time</label>
+            <input type="time" class="form-control" id="watchPartyStartTime">
+          </div>
+          <div class="mb-3">
+            <label for="watchPartyLink" class="form-label">Link</label>
+            <input type="text" class="form-control" id="watchPartyLink" placeholder="Link where watch party is held">
+          </div>
+        </form>
       </div>
 
       <!-- Modal Footer -->
