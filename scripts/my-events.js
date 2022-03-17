@@ -9,10 +9,12 @@ function populateMyEventsList() {
         .then(parties => {
           parties.forEach(party => {
             let eventQuery = db.collection("events").doc(party.data().eventId);
+            let isHost = userID === party.data().host;
+            console.log(isHost);
 
             eventQuery.get()
               .then(eventDoc => {
-                createEventCards(eventDoc, party.data().members);
+                createEventCards(eventDoc, party.data().members, isHost);
               })
           })
         })
@@ -23,7 +25,7 @@ function populateMyEventsList() {
   })
 }
 
-function createEventCards(eventDoc, partyMembers) {
+function createEventCards(eventDoc, partyMembers, isHost) {
   const monthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
   ];
@@ -91,6 +93,16 @@ function createEventCards(eventDoc, partyMembers) {
         modalMember.appendChild(para)
       })
   })
+
+  // Add delete button if the user is the host
+  if (isHost) {
+    const button = document.createElement("button");
+    button.innerHTML = "Delete";
+    button.classList =("btn btn-danger")
+
+    const modalFooter = document.querySelector(".modal-footer");
+    modalFooter.appendChild(button);
+  }
 
   modalGroup.appendChild(modal);
 }
