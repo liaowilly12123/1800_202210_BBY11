@@ -80,8 +80,6 @@ function createEventCards(eventDoc, partyMembers) {
 
   let modalMember = modal.querySelector(".modal-members");
 
-  console.log(modal.querySelector(".modal-members"));
-
   partyMembers.forEach(member => {
     let memberQuery = db.collection("users").doc(member);
     memberQuery.get()
@@ -94,10 +92,7 @@ function createEventCards(eventDoc, partyMembers) {
       })
   })
 
-
   modalGroup.appendChild(modal);
-
-  console.log(partyMembers);
 }
 
 // const parties = [{
