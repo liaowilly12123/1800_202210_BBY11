@@ -16,11 +16,16 @@ function populateMyEventsList() {
               })
           })
         })
+        .then(() => {
+
+        })
     } else {
       // No user is signed in.
       console.log("no user signed in");
     }
   })
+  // loadConfirmationModal();
+
 }
 
 // Formats Date Object into `month day`
@@ -55,16 +60,28 @@ function formatTime(date) {
   return time;
 }
 
+// Creates an event list item for the list group
 function createEventListItem(templateClone, eventID, type, date, time, venue) {
-    templateClone.querySelector("a").setAttribute("data-bs-target", `#${eventID}`);
-    templateClone.querySelector("h4").innerHTML = type;
-    templateClone.querySelector(".time").innerHTML = time;
-    templateClone.querySelector(".venue").innerHTML = venue;
-    templateClone.querySelector("a").addEventListener("click", () => {
-      saveEventInfoToLocalStorage(eventID, type, date, time, venue)
-    })
+  templateClone.querySelector("a").setAttribute("data-bs-target", `#${eventID}`);
+  templateClone.querySelector("h4").innerHTML = type;
+  templateClone.querySelector(".time").innerHTML = time;
+  templateClone.querySelector(".venue").innerHTML = venue;
+  templateClone.querySelector("a").addEventListener("click", () => {
+    saveEventInfoToLocalStorage(eventID, type, date, time, venue)
+  })
 
-    return templateClone;
+  return templateClone;
+}
+
+// Creates a delete button to insert into modal
+function createDeleteButton(modal) {
+  const button = document.createElement("button");
+  button.innerHTML = "Delete";
+  button.classList = ("btn btn-danger")
+  button.setAttribute("data-bs-target", "#confirmation-modal");
+
+  const modalFooter = modal.querySelector(".modal-footer");
+  modalFooter.appendChild(button);
 }
 
 // Saves event info to local storage to be displayed for modals
@@ -119,24 +136,20 @@ function createEventCards(eventDoc, partyMembers, isHost) {
 
   // Add delete button if the user is the host
   if (isHost) {
-    const button = document.createElement("button");
-    button.innerHTML = "Delete";
-    button.classList = ("btn btn-danger")
-    button.setAttribute("data-bs-target", "#confirmation-modal");
-
-    const modalFooter = modal.querySelector(".modal-footer");
-    modalFooter.appendChild(button);
+    createDeleteButton(modal);
   }
 
   modalGroup.appendChild(modal);
 }
 
-// function openConfirmationModal(id) {
 
-// }
+function loadConfirmationModal(id) {
+  document.getElementById("body")
+}
+
 
 
 // load event-list-item.html template 
 loadComponentToId("#eventCardTemplate", "./components/event-list-item.html");
-appendComponentToId("#confirmationModal", "./components/confirmation-modal.html");
+// appendComponentToId("#confirmationModal", "./components/confirmation-modal.html");
 populateMyEventsList();
