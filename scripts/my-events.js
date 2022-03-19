@@ -12,7 +12,7 @@ function populateMyEventsList() {
             let isHost = userID === party.data().host;
             eventQuery.get()
               .then(eventDoc => {
-                createEventCards(eventDoc, party.data().members, isHost);
+                createEventCards(eventDoc, party.data().members, isHost, party.id);
               })
           })
         })
@@ -25,17 +25,15 @@ function populateMyEventsList() {
 
 }
 
-
-
 // Creates an event list item for the list group
-function createEventListItem(templateClone, eventID, type, date, time, venue) {
+function createEventListItem(templateClone, eventID, type, date, time, venue, partyID) {
   templateClone.querySelector("a").setAttribute("data-bs-target", `#${eventID}`);
   templateClone.querySelector("h4").innerHTML = type;
   templateClone.querySelector(".time").innerHTML = time;
   templateClone.querySelector(".venue").innerHTML = venue;
   templateClone.querySelector("a").addEventListener("click", () => {
     // saveEventInfoToLocalStorage(eventID, type, date, time, venue);
-    setConfirmationModal(eventID);
+    setConfirmationModal(eventID, partyID);
   })
 
   return templateClone;
@@ -55,18 +53,28 @@ function createDeleteButton(modal) {
 
 // Saves event info to local storage to be displayed for modals
 function saveEventInfoToLocalStorage(eventID, type, date, time, venue) {
-  console.table({eventID, type, date, time, venue});
+  // console.table({eventID, type, date, time, venue});
 }
 
-function setConfirmationModal(eventID) {
+function setConfirmationModal(eventID, partyID) {
   const modal = document.getElementById("confirmation-modal");
   const message = "Are you sure you want to delete this watch party?";
 
   modal.querySelector(".modal-body").innerHTML = message;
   modal.querySelector("#cancel-button").setAttribute("data-bs-target", `#${eventID}`);
+  
+  modal.querySelector("a").removeEventListener("click", () => {
+    deleteWatchPartyEvent(partyID);
+    removeEventListItem(eventID);
+  })
+  
+  modal.querySelector("a").addEventListener("click", () => {
+    deleteWatchPartyEvent(partyID);
+    removeEventListItem(eventID);
+  });
 }
 
-function createEventCards(eventDoc, partyMembers, isHost) {
+function createEventCards(eventDoc, partyMembers, isHost, partyID) {
   let eventCardTemplate = document.getElementById("eventCardTemplate");
   let eventListGroup = document.getElementById("eventList");
 
@@ -86,7 +94,7 @@ function createEventCards(eventDoc, partyMembers, isHost) {
 
   // Create Event Card List Item
   let eventCardTemplateClone = eventCardTemplate.content.cloneNode(true);
-  const eventCard = createEventListItem(eventCardTemplateClone, eventID, type, formattedDate, time, venue);
+  const eventCard = createEventListItem(eventCardTemplateClone, eventID, type, formattedDate, time, venue, partyID);
   eventListGroup.appendChild(eventCard);
 
   // Create corresponding Modal
@@ -117,6 +125,44 @@ function createEventCards(eventDoc, partyMembers, isHost) {
   }
 
   modalGroup.appendChild(modal);
+}
+
+function deleteWatchPartyEvent(partyID) {
+  const docRef = db.collection("testParties").doc(partyID);
+  console.log(partyID)
+  docRef.delete().then(() => {
+    console.log("Document successfully delete!")
+  }).catch((error) => {
+    console.error("Error removing document: ", error);
+  })
+}
+
+function removeEventListItem(eventID) {
+  const listItem = document.querySelector(`[data-bs-target="#${eventID}"`);
+  listItem.remove();
+}
+const parties = [{
+  "code": 123456,
+  "host": "QjpOITe07POuShC8nmzHcJaAafk1",
+  "eventId": "cfrqBKRJ8yt5c9touCBM",
+  "members": ["QjpOITe07POuShC8nmzHcJaAafk1"],
+}]
+
+function createParty() {
+  let eventsRef = db.collection("testParties");
+  parties.forEach(eventEntry => {
+    const code = eventEntry.code;
+    const host = eventEntry.host;
+    const eventId = eventEntry.eventId;
+    const members = eventEntry.members;
+
+    eventsRef.add({
+      code: code,
+      host: host,
+      eventId: eventId,
+      members: members
+    })
+  })
 }
 
 // load event-list-item.html template 
