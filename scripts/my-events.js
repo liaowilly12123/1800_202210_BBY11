@@ -16,9 +16,6 @@ function populateMyEventsList() {
               })
           })
         })
-        .then(() => {
-
-        })
     } else {
       // No user is signed in.
       console.log("no user signed in");
@@ -67,7 +64,8 @@ function createEventListItem(templateClone, eventID, type, date, time, venue) {
   templateClone.querySelector(".time").innerHTML = time;
   templateClone.querySelector(".venue").innerHTML = venue;
   templateClone.querySelector("a").addEventListener("click", () => {
-    saveEventInfoToLocalStorage(eventID, type, date, time, venue)
+    // saveEventInfoToLocalStorage(eventID, type, date, time, venue);
+    setConfirmationModal(eventID);
   })
 
   return templateClone;
@@ -79,6 +77,7 @@ function createDeleteButton(modal) {
   button.innerHTML = "Delete";
   button.classList = ("btn btn-danger")
   button.setAttribute("data-bs-target", "#confirmation-modal");
+  button.setAttribute("data-bs-toggle", "modal");
 
   const modalFooter = modal.querySelector(".modal-footer");
   modalFooter.appendChild(button);
@@ -87,6 +86,14 @@ function createDeleteButton(modal) {
 // Saves event info to local storage to be displayed for modals
 function saveEventInfoToLocalStorage(eventID, type, date, time, venue) {
   console.table({eventID, type, date, time, venue});
+}
+
+function setConfirmationModal(eventID) {
+  const modal = document.getElementById("confirmation-modal");
+  const message = "Are you sure you want to delete this watch party?";
+
+  modal.querySelector(".modal-body").innerHTML = message;
+  modal.querySelector("#cancel-button").setAttribute("data-bs-target", `#${eventID}`);
 }
 
 function createEventCards(eventDoc, partyMembers, isHost) {
@@ -142,14 +149,7 @@ function createEventCards(eventDoc, partyMembers, isHost) {
   modalGroup.appendChild(modal);
 }
 
-
-function loadConfirmationModal(id) {
-  document.getElementById("body")
-}
-
-
-
 // load event-list-item.html template 
 loadComponentToId("#eventCardTemplate", "./components/event-list-item.html");
-// appendComponentToId("#confirmationModal", "./components/confirmation-modal.html");
+appendComponentToId("#confirmationModal", "./components/confirmation-modal.html");
 populateMyEventsList();
