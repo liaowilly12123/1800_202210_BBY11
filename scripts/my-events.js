@@ -63,14 +63,11 @@ function setConfirmationModal(eventID, partyID) {
   modal.querySelector(".modal-body").innerHTML = message;
   modal.querySelector("#cancel-button").setAttribute("data-bs-target", `#${eventID}`);
   
-  modal.querySelector("a").removeEventListener("click", () => {
-    deleteWatchPartyEvent(partyID);
-    removeEventListItem(eventID);
-  })
-  
   modal.querySelector("a").addEventListener("click", () => {
     deleteWatchPartyEvent(partyID);
     removeEventListItem(eventID);
+  }, {
+    once: true
   });
 }
 
@@ -141,6 +138,7 @@ function removeEventListItem(eventID) {
   const listItem = document.querySelector(`[data-bs-target="#${eventID}"`);
   listItem.remove();
 }
+
 const parties = [{
   "code": 123456,
   "host": "QjpOITe07POuShC8nmzHcJaAafk1",
