@@ -12,7 +12,7 @@ function populateMyEventsList() {
             let isHost = userID === party.data().host;
             eventQuery.get()
               .then(eventDoc => {
-                createEventCards(eventDoc, party.data().members, isHost, party.id);
+                createEventCards(eventDoc, party.data().members, isHost, party);
               })
           })
         })
@@ -32,15 +32,15 @@ function populateMyEventsList() {
 //  date, the date of the event
 //  time, the time of the event
 //  venue, the location of the event
-//  partyID, the party ID for the database.
-function createEventListItem(templateClone, eventID, type, date, time, venue, partyID, members) {
+//  party, the party document
+function createEventListItem(templateClone, eventID, type, date, time, venue, party, members) {
   templateClone.querySelector("a").setAttribute("data-bs-target", `#${eventID}`);
   templateClone.querySelector("h4").innerHTML = type;
   templateClone.querySelector(".time").innerHTML = time;
   templateClone.querySelector(".venue").innerHTML = venue;
   templateClone.querySelector(".members").innerHTML = members;
   templateClone.querySelector("a").addEventListener("click", () => {
-    setConfirmationModal(eventID, partyID);
+    setConfirmationModal(eventID, party.id);
   })
 
   return templateClone;
@@ -86,8 +86,8 @@ function setConfirmationModal(eventID, partyID) {
 //  eventDoc, the event document
 //  partyMembers, the members in the watch party
 //  isHost, if the current user is the host or not
-//  partyID, the party ID
-function createEventCards(eventDoc, partyMembers, isHost, partyID) {
+//  party, the party document
+function createEventCards(eventDoc, partyMembers, isHost, party) {
   let eventCardTemplate = document.getElementById("eventCardTemplate");
   let eventListGroup = document.getElementById("eventList");
 
@@ -101,6 +101,7 @@ function createEventCards(eventDoc, partyMembers, isHost, partyID) {
   const date = eventDoc.data().date.toDate();
   const type = eventDoc.data().type;
   const venue = eventDoc.data().venue;
+  const code = party.data().code;
 
   const time = formatTime(date);
   const formattedDate = formatDate(date);
@@ -108,7 +109,7 @@ function createEventCards(eventDoc, partyMembers, isHost, partyID) {
   // Create Event Card List Item
   let eventCardTemplateClone = eventCardTemplate.content.cloneNode(true);
   const eventCard = createEventListItem(eventCardTemplateClone, eventID, 
-    type, formattedDate, time, venue, partyID, partyMembers.length);
+    type, formattedDate, time, venue, party.id, partyMembers.length);
 
   eventListGroup.appendChild(eventCard);
 
@@ -119,6 +120,8 @@ function createEventCards(eventDoc, partyMembers, isHost, partyID) {
   modal.querySelector(".modal-date").innerHTML = formattedDate;
   modal.querySelector(".modal-time").innerHTML = time;
   modal.querySelector(".modal-venue").innerHTML = venue;
+  modal.querySelector(".modal-invite-code").innerHTML = code;
+  
   modal.querySelector("#member-count").innerHTML = partyMembers.length;
 
   // Populates member list
@@ -155,7 +158,7 @@ function populateMembers(partyMembers, modal) {
 // Delete a watch party event. Called in setConfirmationModal
 // as an eventListener, click.
 // Params:
-//  partID, the watch party ID to delete
+//  partyID, the watch party ID to delete
 function deleteWatchPartyEvent(partyID) {
   const docRef = db.collection("testParties").doc(partyID);
   console.log(partyID)
@@ -175,29 +178,29 @@ function removeEventListItem(eventID) {
   listItem.remove();
 }
 
-const parties = [{
-  "code": 123456,
-  "host": "QjpOITe07POuShC8nmzHcJaAafk1",
-  "eventId": "cfrqBKRJ8yt5c9touCBM",
-  "members": ["QjpOITe07POuShC8nmzHcJaAafk1"],
-}]
+// const parties = [{
+//   "code": 123456,
+//   "host": "QjpOITe07POuShC8nmzHcJaAafk1",
+//   "eventId": "cfrqBKRJ8yt5c9touCBM",
+//   "members": ["QjpOITe07POuShC8nmzHcJaAafk1"],
+// }]
 
-function createParty() {
-  let eventsRef = db.collection("testParties");
-  parties.forEach(eventEntry => {
-    const code = eventEntry.code;
-    const host = eventEntry.host;
-    const eventId = eventEntry.eventId;
-    const members = eventEntry.members;
+// function createParty() {
+//   let eventsRef = db.collection("testParties");
+//   parties.forEach(eventEntry => {
+//     const code = eventEntry.code;
+//     const host = eventEntry.host;
+//     const eventId = eventEntry.eventId;
+//     const members = eventEntry.members;
 
-    eventsRef.add({
-      code: code,
-      host: host,
-      eventId: eventId,
-      members: members
-    })
-  })
-}
+//     eventsRef.add({
+//       code: code,
+//       host: host,
+//       eventId: eventId,
+//       members: members
+//     })
+//   })
+// }
 
 // load event-list-item.html template 
 loadComponentToId("#eventCardTemplate", "./components/joined-event-list-item.html");
