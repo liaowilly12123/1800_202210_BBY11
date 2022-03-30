@@ -7,20 +7,43 @@ function populateMyEventsList() {
 
       partiesQuery.get()
         .then(parties => {
-          parties.forEach(party => {
-            let eventQuery = db.collection("events").doc(party.data().eventId);
-            let isHost = userID === party.data().host;
-            eventQuery.get()
-              .then(eventDoc => {
-                createEventCards(eventDoc, party.data().members, isHost, party);
-              })
-          })
+          if (!parties.empty) {
+            parties.forEach(party => {
+              let eventQuery = db.collection("events").doc(party.data().eventId);
+              let isHost = userID === party.data().host;
+              eventQuery.get()
+                .then(eventDoc => {
+                  createEventCards(eventDoc, party.data().members, isHost, party);
+                })
+            })
+          } else {
+            displayNoEventsJoined();
+          }
         })
     } else {
       // No user is signed in.
       console.log("no user signed in");
     }
   })
+}
+
+// Displays a no events joined card
+// Called in populateMyEventsList().
+function displayNoEventsJoined() {
+  const eventListGroup = document.getElementById("eventList");
+
+  const div = document.createElement("div");
+  const para = document.createElement("p");
+  const textNode = document.createTextNode("You have no events.");
+
+  para.appendChild(textNode);
+  div.appendChild(para);
+
+  div.classList.add("ms-3");
+  div.classList.add("mt-3");
+  div.classList.add("no-event-msg");
+
+  eventListGroup.appendChild(div);
 }
 
 // Creates an event list item for the list group. Called in
@@ -71,7 +94,7 @@ function setConfirmationModal(eventID, partyID) {
 
   modal.querySelector(".modal-body").innerHTML = message;
   modal.querySelector("#cancel-button").setAttribute("data-bs-target", `#${eventID}`);
-  
+
   modal.querySelector("a").addEventListener("click", () => {
     deleteWatchPartyEvent(partyID);
     removeEventListItem(eventID);
@@ -108,7 +131,7 @@ function createEventCards(eventDoc, partyMembers, isHost, party) {
 
   // Create Event Card List Item
   let eventCardTemplateClone = eventCardTemplate.content.cloneNode(true);
-  const eventCard = createEventListItem(eventCardTemplateClone, eventID, 
+  const eventCard = createEventListItem(eventCardTemplateClone, eventID,
     type, formattedDate, time, venue, party.id, partyMembers.length);
 
   eventListGroup.appendChild(eventCard);
@@ -121,7 +144,7 @@ function createEventCards(eventDoc, partyMembers, isHost, party) {
   modal.querySelector(".modal-time").innerHTML = time;
   modal.querySelector(".modal-venue").innerHTML = venue;
   modal.querySelector(".modal-invite-code").innerHTML = code;
-  
+
   modal.querySelector("#member-count").innerHTML = partyMembers.length;
 
   // Populates member list
