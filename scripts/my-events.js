@@ -33,11 +33,12 @@ function populateMyEventsList() {
 //  time, the time of the event
 //  venue, the location of the event
 //  partyID, the party ID for the database.
-function createEventListItem(templateClone, eventID, type, date, time, venue, partyID) {
+function createEventListItem(templateClone, eventID, type, date, time, venue, partyID, members) {
   templateClone.querySelector("a").setAttribute("data-bs-target", `#${eventID}`);
   templateClone.querySelector("h4").innerHTML = type;
   templateClone.querySelector(".time").innerHTML = time;
   templateClone.querySelector(".venue").innerHTML = venue;
+  templateClone.querySelector(".members").innerHTML = members;
   templateClone.querySelector("a").addEventListener("click", () => {
     setConfirmationModal(eventID, partyID);
   })
@@ -106,7 +107,9 @@ function createEventCards(eventDoc, partyMembers, isHost, partyID) {
 
   // Create Event Card List Item
   let eventCardTemplateClone = eventCardTemplate.content.cloneNode(true);
-  const eventCard = createEventListItem(eventCardTemplateClone, eventID, type, formattedDate, time, venue, partyID);
+  const eventCard = createEventListItem(eventCardTemplateClone, eventID, 
+    type, formattedDate, time, venue, partyID, partyMembers.length);
+
   eventListGroup.appendChild(eventCard);
 
   // Create corresponding Modal
@@ -116,6 +119,7 @@ function createEventCards(eventDoc, partyMembers, isHost, partyID) {
   modal.querySelector(".modal-date").innerHTML = formattedDate;
   modal.querySelector(".modal-time").innerHTML = time;
   modal.querySelector(".modal-venue").innerHTML = venue;
+  modal.querySelector("#member-count").innerHTML = partyMembers.length;
 
   // Populates member list
   populateMembers(partyMembers, modal);
@@ -196,6 +200,6 @@ function createParty() {
 }
 
 // load event-list-item.html template 
-loadComponentToId("#eventCardTemplate", "./components/event-list-item.html");
+loadComponentToId("#eventCardTemplate", "./components/joined-event-list-item.html");
 loadComponentToId("#confirmationModal", "./components/confirmation-modal.html");
 populateMyEventsList();
