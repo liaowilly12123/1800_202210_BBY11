@@ -1,8 +1,8 @@
+// Populates the users my events list.
 function populateMyEventsList() {
   firebase.auth().onAuthStateChanged(user => {
     if (user) {
       let userID = user.uid;
-
       let partiesQuery = db.collection("testParties").where("members", "array-contains", userID);
 
       partiesQuery.get()
@@ -21,25 +21,34 @@ function populateMyEventsList() {
       console.log("no user signed in");
     }
   })
-  // loadConfirmationModal();
-
 }
 
-// Creates an event list item for the list group
+// Creates an event list item for the list group. Called in
+// createEventCards().
+// Params:
+//  templateClone, the template to follow
+//  eventID, the event ID
+//  type, the type of event
+//  date, the date of the event
+//  time, the time of the event
+//  venue, the location of the event
+//  partyID, the party ID for the database.
 function createEventListItem(templateClone, eventID, type, date, time, venue, partyID) {
   templateClone.querySelector("a").setAttribute("data-bs-target", `#${eventID}`);
   templateClone.querySelector("h4").innerHTML = type;
   templateClone.querySelector(".time").innerHTML = time;
   templateClone.querySelector(".venue").innerHTML = venue;
   templateClone.querySelector("a").addEventListener("click", () => {
-    // saveEventInfoToLocalStorage(eventID, type, date, time, venue);
     setConfirmationModal(eventID, partyID);
   })
 
   return templateClone;
 }
 
-// Creates a delete button to insert into modal
+// Creates a delete button to insert into modal. Called in
+// createEventCards().
+// Params:
+//  modal, the modal to insert into
 function createDeleteButton(modal) {
   const button = document.createElement("button");
   button.innerHTML = "Delete";
@@ -51,11 +60,10 @@ function createDeleteButton(modal) {
   modalFooter.appendChild(button);
 }
 
-// Saves event info to local storage to be displayed for modals
-function saveEventInfoToLocalStorage(eventID, type, date, time, venue) {
-  // console.table({eventID, type, date, time, venue});
-}
-
+// Creates a confirmation modal before deletion.
+// Params:
+//  eventID, the event list item ID to remove
+//  partyID, the party ID to delete from database
 function setConfirmationModal(eventID, partyID) {
   const modal = document.getElementById("confirmation-modal");
   const message = "Are you sure you want to delete this watch party?";
@@ -71,6 +79,13 @@ function setConfirmationModal(eventID, partyID) {
   });
 }
 
+// Creates event cards and its corresponding modal. Each event card is
+// put into the list.
+// Params:
+//  eventDoc, the event document
+//  partyMembers, the members in the watch party
+//  isHost, if the current user is the host or not
+//  partyID, the party ID
 function createEventCards(eventDoc, partyMembers, isHost, partyID) {
   let eventCardTemplate = document.getElementById("eventCardTemplate");
   let eventListGroup = document.getElementById("eventList");
@@ -102,6 +117,22 @@ function createEventCards(eventDoc, partyMembers, isHost, partyID) {
   modal.querySelector(".modal-time").innerHTML = time;
   modal.querySelector(".modal-venue").innerHTML = venue;
 
+  // Populates member list
+  populateMembers(partyMembers, modal);
+
+  // Add delete button if the user is the host
+  if (isHost) {
+    createDeleteButton(modal);
+  }
+
+  modalGroup.appendChild(modal);
+}
+
+// Called by createEventCards() to populate the members list
+// Params:
+//  partyMembers, an array of members
+//  modal, the modal to insert into
+function populateMembers(partyMembers, modal) {
   let modalMember = modal.querySelector(".modal-members");
 
   partyMembers.forEach(member => {
@@ -115,15 +146,12 @@ function createEventCards(eventDoc, partyMembers, isHost, partyID) {
         modalMember.appendChild(para)
       })
   })
-
-  // Add delete button if the user is the host
-  if (isHost) {
-    createDeleteButton(modal);
-  }
-
-  modalGroup.appendChild(modal);
 }
 
+// Delete a watch party event. Called in setConfirmationModal
+// as an eventListener, click.
+// Params:
+//  partID, the watch party ID to delete
 function deleteWatchPartyEvent(partyID) {
   const docRef = db.collection("testParties").doc(partyID);
   console.log(partyID)
@@ -134,6 +162,10 @@ function deleteWatchPartyEvent(partyID) {
   })
 }
 
+// Removes the corresponding watch party event list item.
+// Called in setConfirmationModal as an eventListener, click.
+// Params:
+//  eventID, the event list item to remove
 function removeEventListItem(eventID) {
   const listItem = document.querySelector(`[data-bs-target="#${eventID}"`);
   listItem.remove();
