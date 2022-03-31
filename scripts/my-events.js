@@ -182,7 +182,11 @@ function setModalDetails(members, isHost) {
   document.querySelector(".modal-date").innerHTML = date;
   document.querySelector(".modal-time").innerHTML = time;
   document.querySelector(".modal-venue").innerHTML = venue;
-  document.querySelector(".modal-invite-code").innerHTML = code;
+  document.querySelector("#code").value = code;
+  // document.querySelector(".code").addEventListener("click", () => {
+  //   copyClipboard();
+  // });
+
 
   document.querySelector("#member-count").innerHTML = members.length;
 
