@@ -5,7 +5,7 @@ function populateMyEventsList() {
   firebase.auth().onAuthStateChanged(user => {
     if (user) {
       let userID = user.uid;
-      let partiesQuery = db.collection("testParties").where("members", "array-contains", userID);
+      let partiesQuery = db.collection("parties").where("members", "array-contains", userID);
 
       partiesQuery.get()
         .then(parties => {
@@ -191,7 +191,7 @@ function populateMembers(partyMembers, modal) {
  * @param {*} partyID the watch party ID to delete
  */
 function deleteWatchPartyEvent(partyID) {
-  const docRef = db.collection("testParties").doc(partyID);
+  const docRef = db.collection("parties").doc(partyID);
   console.log(partyID)
   docRef.delete().then(() => {
     console.log("Document successfully delete!")
