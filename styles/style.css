@@ -5,3 +5,9 @@ i {
 .no-event-msg {
   font-size: 1.5em;
 }
+
+#invalid-code {
+  color: red;
+  font-size: 1em;
+  display: none;
+}
