@@ -29,3 +29,7 @@ function formatTime(date) {
 
   return time;
 }
+
+function redirect(location) {
+  window.location.href = location;
+}
