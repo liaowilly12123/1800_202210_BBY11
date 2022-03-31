@@ -1,20 +1,24 @@
+// Populates the users my events list.
 function populateMyEventsList() {
   firebase.auth().onAuthStateChanged(user => {
     if (user) {
       let userID = user.uid;
-
       let partiesQuery = db.collection("testParties").where("members", "array-contains", userID);
 
       partiesQuery.get()
         .then(parties => {
-          parties.forEach(party => {
-            let eventQuery = db.collection("events").doc(party.data().eventId);
-
-            eventQuery.get()
-              .then(eventDoc => {
-                createEventCards(eventDoc, party.data().members);
-              })
-          })
+          if (!parties.empty) {
+            parties.forEach(party => {
+              let eventQuery = db.collection("events").doc(party.data().eventId);
+              let isHost = userID === party.data().host;
+              eventQuery.get()
+                .then(eventDoc => {
+                  createEventCards(eventDoc, party.data().members, isHost, party);
+                })
+            })
+          } else {
+            displayNoEventsJoined();
+          }
         })
     } else {
       // No user is signed in.
@@ -23,10 +27,90 @@ function populateMyEventsList() {
   })
 }
 
-function createEventCards(eventDoc, partyMembers) {
-  const monthNames = ["January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ];
+// Displays a no events joined card
+// Called in populateMyEventsList().
+function displayNoEventsJoined() {
+  const eventListGroup = document.getElementById("eventList");
+
+  const div = document.createElement("div");
+  const para = document.createElement("p");
+  const textNode = document.createTextNode("You have no events.");
+
+  para.appendChild(textNode);
+  div.appendChild(para);
+
+  div.classList.add("ms-3");
+  div.classList.add("mt-3");
+  div.classList.add("no-event-msg");
+
+  eventListGroup.appendChild(div);
+}
+
+// Creates an event list item for the list group. Called in
+// createEventCards().
+// Params:
+//  templateClone, the template to follow
+//  eventID, the event ID
+//  type, the type of event
+//  date, the date of the event
+//  time, the time of the event
+//  venue, the location of the event
+//  party, the party document
+function createEventListItem(templateClone, eventID, type, date, time, venue, party, members) {
+  templateClone.querySelector("a").setAttribute("data-bs-target", `#${eventID}`);
+  templateClone.querySelector("h4").innerHTML = type;
+  templateClone.querySelector(".time").innerHTML = time;
+  templateClone.querySelector(".venue").innerHTML = venue;
+  templateClone.querySelector(".members").innerHTML = members;
+  templateClone.querySelector("a").addEventListener("click", () => {
+    setConfirmationModal(eventID, party.id);
+  })
+
+  return templateClone;
+}
+
+// Creates a delete button to insert into modal. Called in
+// createEventCards().
+// Params:
+//  modal, the modal to insert into
+function createDeleteButton(modal) {
+  const button = document.createElement("button");
+  button.innerHTML = "Delete";
+  button.classList = ("btn btn-danger")
+  button.setAttribute("data-bs-target", "#confirmation-modal");
+  button.setAttribute("data-bs-toggle", "modal");
+
+  const modalFooter = modal.querySelector(".modal-footer");
+  modalFooter.appendChild(button);
+}
+
+// Creates a confirmation modal before deletion.
+// Params:
+//  eventID, the event list item ID to remove
+//  partyID, the party ID to delete from database
+function setConfirmationModal(eventID, partyID) {
+  const modal = document.getElementById("confirmation-modal");
+  const message = "Are you sure you want to delete this watch party?";
+
+  modal.querySelector(".modal-body").innerHTML = message;
+  modal.querySelector("#cancel-button").setAttribute("data-bs-target", `#${eventID}`);
+
+  modal.querySelector("a").addEventListener("click", () => {
+    deleteWatchPartyEvent(partyID);
+    removeEventListItem(eventID);
+  }, {
+    once: true
+  });
+}
+
+// Creates event cards and its corresponding modal. Each event card is
+// put into the list.
+// Params:
+//  eventDoc, the event document
+//  partyMembers, the members in the watch party
+//  isHost, if the current user is the host or not
+//  party, the party document
+function createEventCards(eventDoc, partyMembers, isHost, party) {
   let eventCardTemplate = document.getElementById("eventCardTemplate");
   let eventListGroup = document.getElementById("eventList");
 
@@ -40,33 +124,15 @@ function createEventCards(eventDoc, partyMembers) {
   const date = eventDoc.data().date.toDate();
   const type = eventDoc.data().type;
   const venue = eventDoc.data().venue;
+  const code = party.data().code;
 
-  // convert hour from 24h to 12h format
-  let hour = date.getHours();
+  const time = formatTime(date);
+  const formattedDate = formatDate(date);
 
-  const ampm = hour < 12 ? 'am' : 'pm';
-
-  hour = hour % 12;
-  hour = hour ? hour : 12;
-
-  // format minutes to have 2 digits
-  let minutes = date.getMinutes();
-  minutes = minutes < 10 ? `0${minutes}` : minutes;
-  const time = `${hour}:${minutes} ${ampm}`;
-
-  // date formatted
-  const month = monthNames[date.getMonth()];
-  const day = date.getDate();
-  const formattedDate = `${month} ${day}`;
-
-  // Create Event Card
-  let eventCard = eventCardTemplate.content.cloneNode(true);
-
-  // eventCard.querySelector("a").id = eventID;
-  eventCard.querySelector("a").setAttribute("data-bs-target", `#${eventID}`);
-  eventCard.querySelector("h4").innerHTML = type;
-  eventCard.querySelector(".time").innerHTML = time;
-  eventCard.querySelector(".venue").innerHTML = venue;
+  // Create Event Card List Item
+  let eventCardTemplateClone = eventCardTemplate.content.cloneNode(true);
+  const eventCard = createEventListItem(eventCardTemplateClone, eventID,
+    type, formattedDate, time, venue, party.id, partyMembers.length);
 
   eventListGroup.appendChild(eventCard);
 
@@ -77,7 +143,26 @@ function createEventCards(eventDoc, partyMembers) {
   modal.querySelector(".modal-date").innerHTML = formattedDate;
   modal.querySelector(".modal-time").innerHTML = time;
   modal.querySelector(".modal-venue").innerHTML = venue;
+  modal.querySelector(".modal-invite-code").innerHTML = code;
 
+  modal.querySelector("#member-count").innerHTML = partyMembers.length;
+
+  // Populates member list
+  populateMembers(partyMembers, modal);
+
+  // Add delete button if the user is the host
+  if (isHost) {
+    createDeleteButton(modal);
+  }
+
+  modalGroup.appendChild(modal);
+}
+
+// Called by createEventCards() to populate the members list
+// Params:
+//  partyMembers, an array of members
+//  modal, the modal to insert into
+function populateMembers(partyMembers, modal) {
   let modalMember = modal.querySelector(".modal-members");
 
   partyMembers.forEach(member => {
@@ -91,15 +176,36 @@ function createEventCards(eventDoc, partyMembers) {
         modalMember.appendChild(para)
       })
   })
+}
 
-  modalGroup.appendChild(modal);
+// Delete a watch party event. Called in setConfirmationModal
+// as an eventListener, click.
+// Params:
+//  partyID, the watch party ID to delete
+function deleteWatchPartyEvent(partyID) {
+  const docRef = db.collection("testParties").doc(partyID);
+  console.log(partyID)
+  docRef.delete().then(() => {
+    console.log("Document successfully delete!")
+  }).catch((error) => {
+    console.error("Error removing document: ", error);
+  })
+}
+
+// Removes the corresponding watch party event list item.
+// Called in setConfirmationModal as an eventListener, click.
+// Params:
+//  eventID, the event list item to remove
+function removeEventListItem(eventID) {
+  const listItem = document.querySelector(`[data-bs-target="#${eventID}"`);
+  listItem.remove();
 }
 
 // const parties = [{
 //   "code": 123456,
-//   "host": "KvzpyQhg6CRmOrttgvuDWCzMx8o1",
-//   "eventId": "FhkrOgjEQYqYEwhFRLJt",
-//   "members": ["KvzpyQhg6CRmOrttgvuDWCzMx8o1"],
+//   "host": "QjpOITe07POuShC8nmzHcJaAafk1",
+//   "eventId": "cfrqBKRJ8yt5c9touCBM",
+//   "members": ["QjpOITe07POuShC8nmzHcJaAafk1"],
 // }]
 
 // function createParty() {
@@ -120,5 +226,6 @@ function createEventCards(eventDoc, partyMembers) {
 // }
 
 // load event-list-item.html template 
-loadComponentToId("#eventCardTemplate", "./components/event-list-item.html");
+loadComponentToId("#eventCardTemplate", "./components/joined-event-list-item.html");
+loadComponentToId("#confirmationModal", "./components/confirmation-modal.html");
 populateMyEventsList();
