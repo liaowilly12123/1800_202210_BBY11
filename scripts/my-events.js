@@ -63,8 +63,8 @@ function displayNoEventsJoined() {
 function createEventListItem(templateClone, eventID, type, date, time, venue, party, members) {
   templateClone.querySelector("a").setAttribute("data-bs-target", `#${eventID}`);
   templateClone.querySelector("h4").innerHTML = type;
+  templateClone.querySelector(".date").innerHTML = date;
   templateClone.querySelector(".time").innerHTML = time;
-  templateClone.querySelector(".venue").innerHTML = venue;
   templateClone.querySelector(".members").innerHTML = members;
   templateClone.querySelector("a").addEventListener("click", () => {
     setConfirmationModal(eventID, party.id);
@@ -127,7 +127,7 @@ function createEventCards(eventDoc, partyMembers, isHost, party) {
   const eventID = eventDoc.id;
 
   // converts firebase timestamp to JS Date object
-  const date = eventDoc.data().date.toDate();
+  const date = party.data().date.toDate();
   const type = eventDoc.data().type;
   const venue = eventDoc.data().venue;
   const code = party.data().code;
