@@ -66,7 +66,7 @@ function createWatchParty() {
   var eventDate = document.getElementById("watchPartyStartDate").value;
   var eventTime = document.getElementById("watchPartyStartTime").value;
   var link = document.getElementById("watchPartyLink").value;
-  var eventID = document.querySelector(".modal").id;
+  var eventID = localStorage.getItem("eventID");
 
   let date = new Date(`${eventDate} ${eventTime}`);
 
