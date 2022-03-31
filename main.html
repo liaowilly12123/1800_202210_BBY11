@@ -20,9 +20,19 @@
   <div id="navbarPlaceholder"></div>
 
   <div class="container">
-    <div class="mt-3">
-      <h2 id="todays-date">February 22</h2>
+    <div class="d-flex justify-content-between">
+      <div class="p-3" onclick="previousDay()">
+        <i class="bi bi-caret-left-fill"></i>
+      </div>
+      <div class="align-self-center">
+        <h2 id="todays-date">February 22</h2>
+      </div>
+      <div class="p-3" onclick="nextDay()">
+        <i class="bi bi-caret-right-fill"></i>
+      </div>
+
     </div>
+
     <div id="eventList" class="list-group mb-5">
     </div>
   </div>
@@ -42,8 +52,8 @@
   <script src="./scripts/event-detail-modal.js"></script>
   <script src="./scripts/db-population-script.js"></script>
   <script src="./scripts/code-generator.js"></script>
-  <script src="./scripts/main.js"></script>
   <script src="./scripts/util.js"></script>
+  <script src="./scripts/main.js"></script>
   
 
 </body>
