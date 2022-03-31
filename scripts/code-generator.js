@@ -17,5 +17,5 @@ function copyClipboard() {
     navigator.clipboard.writeText(copyCode.value);
 
     //Alert the copied code
-    alert("Watch-Party Code Copied" + copyCode.value);
+    alert("Watch-Party Code Copied " + copyCode.value);
 }
