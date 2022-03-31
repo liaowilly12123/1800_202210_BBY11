@@ -1,34 +1,51 @@
+// Start date for demo purpose
+let currentDate = new Date("2022-02-17 00:00");
+let startDateBound = new Date("2022-02-17 00:00");
+
 function populateEventList() {
   let eventCardTemplate = document.getElementById("eventCardTemplate");
   let eventListGroup = document.getElementById("eventList");
 
-  db.collection("events").orderBy("date").get()
+  resetList();
+
+  db.collection("events").where("date", ">=", currentDate).orderBy("date").get()
     .then(allEvents => {
-      allEvents.forEach(doc => {
-        // used to link card to modal
-        const eventID = doc.id;
+      if (!allEvents.empty) {
 
-        // converts firebase timestamp to JS Date object
-        const date = doc.data().date.toDate();
-        const type = doc.data().type;
-        const venue = doc.data().venue;
-
-        const time = formatTime(date);
-        const formattedDate = formatDate(date);
-
-        // Create Event Card
-        let eventCard = eventCardTemplate.content.cloneNode(true);
-
-        eventCard.querySelector("a").setAttribute("data-bs-target", "#event-form-modal");
-        eventCard.querySelector("a").addEventListener("click", () => {
-          openModal(eventID, type, formattedDate, time, venue);
+        allEvents.forEach(doc => {
+          // used to link card to modal
+          const eventID = doc.id;
+  
+          // converts firebase timestamp to JS Date object
+          const date = doc.data().date.toDate();
+          const type = doc.data().type;
+          const venue = doc.data().venue;
+  
+          const time = formatTime(date);
+          const formattedDate = formatDate(date);
+  
+          const eventDate = new Date(date);
+          const nextDay = new Date(currentDate.getTime());
+  
+          nextDay.setDate(nextDay.getDate() + 1)
+  
+          if (eventDate < nextDay) {
+  
+            // Create Event Card
+            let eventCard = eventCardTemplate.content.cloneNode(true);
+            
+            eventCard.querySelector("a").setAttribute("data-bs-target", "#event-form-modal");
+            eventCard.querySelector("a").addEventListener("click", () => {
+              openModal(eventID, type, formattedDate, time, venue);
+            })
+            eventCard.querySelector("h4").innerHTML = type;
+            eventCard.querySelector(".time").innerHTML = time;
+            eventCard.querySelector(".venue").innerHTML = venue;
+            
+            eventListGroup.appendChild(eventCard);
+          }
         })
-        eventCard.querySelector("h4").innerHTML = type;
-        eventCard.querySelector(".time").innerHTML = time;
-        eventCard.querySelector(".venue").innerHTML = venue;
-
-        eventListGroup.appendChild(eventCard);
-      })
+      }
     })
 }
 
@@ -57,9 +74,35 @@ function setModalDetails() {
   document.querySelector(".modal-venue").innerHTML = venue;
 }
 
+function nextDay() {
+  currentDate.setDate(currentDate.getDate()+1);
+  setDate();
+  populateEventList();
+}
+
+function previousDay() {
+  currentDate.setDate(currentDate.getDate()-1);
+
+  if (currentDate < startDateBound) {
+    currentDate.setDate(currentDate.getDate()+1);
+  }
+  setDate();
+  populateEventList();
+}
+
+function setDate() {
+  const dateElement = document.querySelector("#todays-date");
+  dateElement.innerHTML = formatDate(currentDate);
+}
+
+function resetList() {
+  const listElement = document.querySelector("#eventList");
+  listElement.innerHTML = "";
+}
+
 // load event-list-item.html template 
 loadComponentToId("#eventCardTemplate", "./components/event-list-item.html");
-
+setDate();
 populateEventList();
 
 function createWatchParty() {
