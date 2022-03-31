@@ -11,3 +11,14 @@ i {
   font-size: 1em;
   display: none;
 }
+
+#code {
+  color: black;
+  font-weight: bold;
+}
+
+#copy-success {
+  color: green;
+  /* display: none; */
+  visibility: hidden;
+}

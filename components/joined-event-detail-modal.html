@@ -26,15 +26,21 @@
           <i class="bi bi-link-45deg"></i>
           <a class="viewing-Link" href="#"></a>
         </div>
-        <div>
-          <p>
-            Invite code: <span class="modal-invite-code"></span>
-          </p>
+        <div class="mt-4">
+          <h4>Invite Code</h4>
+          <div class="input-group ps-3 pe-5" onclick="copyClipboard()">
+            <input type="text" id="code" class="form-control" placeholder="Recipient's username"
+              aria-label="Recipient's username" aria-describedby="basic-addon2">
+            <span class="input-group-text" id="basic-addon2">
+              <i class="bi bi-clipboard2"></i>
+            </span>
+          </div>
+          <div id="copy-success" class="ps-4">Code has been copied!</div>
         </div>
 
-        <div class="mt-3">
+        <div class="mt-2">
           <h4>Members (<span id="member-count">14</span>)</h4>
-          <div class="modal-members ms-2">
+          <div class="modal-members ps-3">
           </div>
         </div>
       </div>
