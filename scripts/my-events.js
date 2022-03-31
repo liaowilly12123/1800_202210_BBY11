@@ -72,6 +72,11 @@ function createEventListItem(templateClone, eventID, type, date, time, venue, pa
     setLocalStorage(eventID, type, date, time, venue, party.data().code);
     setModalDetails(members, isHost);
   })
+  if (isHost) {
+
+    templateClone.querySelector("a").style.backgroundColor = "yellow";
+  }
+
 
   return templateClone;
 }
