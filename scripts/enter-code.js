@@ -21,7 +21,7 @@ function addWatchPartyMember() {
             })
           } else {
             // If watch party with the code does not exist
-            alertInvalidCode("Invalid code.")
+            displayCodeInvalidMessage();
           }
         })
     } else {
@@ -37,8 +37,12 @@ function validateCode() {
     console.log(code);
     addWatchPartyMember();
   } else {
-    alertInvalidCode("Please input a code.");
+    displayCodeInvalidMessage();
   }
+}
+
+function displayCodeInvalidMessage() {
+  document.querySelector("#invalid-code").style.display = "block";
 }
 
 function alertInvalidCode(message) {
