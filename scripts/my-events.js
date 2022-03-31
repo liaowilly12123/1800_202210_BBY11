@@ -5,7 +5,7 @@ function populateMyEventsList() {
   firebase.auth().onAuthStateChanged(user => {
     if (user) {
       let userID = user.uid;
-      let partiesQuery = db.collection("testParties").where("members", "array-contains", userID);
+      let partiesQuery = db.collection("parties").where("members", "array-contains", userID).orderBy("date");
 
       partiesQuery.get()
         .then(parties => {
@@ -63,8 +63,8 @@ function displayNoEventsJoined() {
 function createEventListItem(templateClone, eventID, type, date, time, venue, party, members) {
   templateClone.querySelector("a").setAttribute("data-bs-target", `#${eventID}`);
   templateClone.querySelector("h4").innerHTML = type;
+  templateClone.querySelector(".date").innerHTML = date;
   templateClone.querySelector(".time").innerHTML = time;
-  templateClone.querySelector(".venue").innerHTML = venue;
   templateClone.querySelector(".members").innerHTML = members;
   templateClone.querySelector("a").addEventListener("click", () => {
     setConfirmationModal(eventID, party.id);
@@ -127,7 +127,7 @@ function createEventCards(eventDoc, partyMembers, isHost, party) {
   const eventID = eventDoc.id;
 
   // converts firebase timestamp to JS Date object
-  const date = eventDoc.data().date.toDate();
+  const date = party.data().date.toDate();
   const type = eventDoc.data().type;
   const venue = eventDoc.data().venue;
   const code = party.data().code;
@@ -138,7 +138,7 @@ function createEventCards(eventDoc, partyMembers, isHost, party) {
   // Create Event Card List Item
   let eventCardTemplateClone = eventCardTemplate.content.cloneNode(true);
   const eventCard = createEventListItem(eventCardTemplateClone, eventID,
-    type, formattedDate, time, venue, party.id, partyMembers.length);
+    type, formattedDate, time, venue, party, partyMembers.length);
 
   eventListGroup.appendChild(eventCard);
 
@@ -191,7 +191,7 @@ function populateMembers(partyMembers, modal) {
  * @param {*} partyID the watch party ID to delete
  */
 function deleteWatchPartyEvent(partyID) {
-  const docRef = db.collection("testParties").doc(partyID);
+  const docRef = db.collection("parties").doc(partyID);
   console.log(partyID)
   docRef.delete().then(() => {
     console.log("Document successfully delete!")
