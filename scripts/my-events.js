@@ -138,7 +138,7 @@ function createEventCards(eventDoc, partyMembers, isHost, party) {
   // Create Event Card List Item
   let eventCardTemplateClone = eventCardTemplate.content.cloneNode(true);
   const eventCard = createEventListItem(eventCardTemplateClone, eventID,
-    type, formattedDate, time, venue, party.id, partyMembers.length);
+    type, formattedDate, time, venue, party, partyMembers.length);
 
   eventListGroup.appendChild(eventCard);
 
