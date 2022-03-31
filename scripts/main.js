@@ -77,32 +77,24 @@ function createWatchParty() {
 
   localStorage.setItem("code", code);
 
-  // firebase.auth().onAuthStateChanged(user => {
-  //   if (user) {
-  //     // var userID = db.collection("users").doc(user.uid)
-  //     var userID = user.uid;
-  //     //get the document for current user.
-  //     db.collection("parties").add({
-  //       code: code,
-  //       host: userID,
-  //       eventdate: eventDate,
-  //       eventtime: eventTime,
-  //       eventId: eventID,
-  //       members: [userID],
-  //       link: link,
-  //       timestamp: firebase.firestore.FieldValue.serverTimestamp()
-  //     }).then(() => {
-  //       // window.location.href = "my-events.html"; //new line added
-  //     })
-
-  //   } else {
-  //     // No user is signed in.
-  //   }
-  // });
-
-
-
-
-
-
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      // var userID = db.collection("users").doc(user.uid)
+      var userID = user.uid;
+      //get the document for current user.
+      db.collection("parties").add({
+        code: code,
+        host: userID,
+        date: date,
+        eventId: eventID,
+        members: [userID],
+        link: link,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        window.location.href = "/display-code.html"; //new line added
+      })
+    } else {
+      // No user is signed in.
+    }
+  });
 }
