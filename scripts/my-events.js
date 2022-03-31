@@ -147,6 +147,15 @@ function createEventCards(eventDoc, partyMembers, isHost, party) {
   eventListGroup.appendChild(eventCard);
 }
 
+/**
+ * Sets event info to localStorage.
+ * @param {*} eventID the event ID
+ * @param {*} type the type of the event
+ * @param {*} date the date of the event
+ * @param {*} time the time of the event
+ * @param {*} venue the location of the event
+ * @param {*} code the code for the event
+ */
 function setLocalStorage(eventID, type, date, time, venue, code, ) {
   localStorage.setItem("eventID", eventID);
   localStorage.setItem("type", type);
@@ -156,6 +165,11 @@ function setLocalStorage(eventID, type, date, time, venue, code, ) {
   localStorage.setItem("code", code);
 }
 
+/**
+ * Sets the details of the modal to the event details.
+ * @param {*} members list of members in the watch party
+ * @param {*} isHost boolean if the user is the host
+ */
 function setModalDetails(members, isHost) {
   const type = localStorage.getItem("type");
   const date = localStorage.getItem("date");
