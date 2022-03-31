@@ -5,7 +5,7 @@ function populateMyEventsList() {
   firebase.auth().onAuthStateChanged(user => {
     if (user) {
       let userID = user.uid;
-      let partiesQuery = db.collection("parties").where("members", "array-contains", userID);
+      let partiesQuery = db.collection("parties").where("members", "array-contains", userID).orderBy("date");
 
       partiesQuery.get()
         .then(parties => {

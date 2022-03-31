@@ -5,7 +5,7 @@ function addWatchPartyMember() {
 
       let code = document.getElementById("partyInviteCode").value;
 
-      let partiesQuery = db.collection("testParties").where("code", "==", parseInt(code));
+      let partiesQuery = db.collection("parties").where("code", "==", parseInt(code));
 
       partiesQuery.get()
         .then(querySnapshot => {
