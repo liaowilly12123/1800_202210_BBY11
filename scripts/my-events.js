@@ -58,16 +58,19 @@ function displayNoEventsJoined() {
  * @param {*} time the time of the event
  * @param {*} venue the location of the event
  * @param {*} party the party document
- * @param {*} members the number of members
+ * @param {*} members the members of the watch party
  */
-function createEventListItem(templateClone, eventID, type, date, time, venue, party, members) {
-  templateClone.querySelector("a").setAttribute("data-bs-target", `#${eventID}`);
+function createEventListItem(templateClone, eventID, type, date, time, venue, party, members, isHost) {
+  templateClone.querySelector("a").setAttribute("data-bs-target", "#eventDetailModal");
+  templateClone.querySelector("a").id = eventID;
   templateClone.querySelector("h4").innerHTML = type;
   templateClone.querySelector(".date").innerHTML = date;
   templateClone.querySelector(".time").innerHTML = time;
-  templateClone.querySelector(".members").innerHTML = members;
+  templateClone.querySelector(".members").innerHTML = members.length;
   templateClone.querySelector("a").addEventListener("click", () => {
     setConfirmationModal(eventID, party.id);
+    setLocalStorage(eventID, type, date, time, venue, party.data().code);
+    setModalDetails(members, isHost);
   })
 
   return templateClone;
@@ -77,14 +80,18 @@ function createEventListItem(templateClone, eventID, type, date, time, venue, pa
  * Creates a delete button to insert into modal. Called in createEventCards().
  * @param {*} modal the modal to insert into
  */
-function createDeleteButton(modal) {
+function createDeleteButton() {
   const button = document.createElement("button");
+  const buttonExist = document.querySelector(`[data-bs-target="#confirmation-modal"]`)
+  if (buttonExist) {
+    buttonExist.remove();
+  }
   button.innerHTML = "Delete";
   button.classList = ("btn btn-danger")
   button.setAttribute("data-bs-target", "#confirmation-modal");
   button.setAttribute("data-bs-toggle", "modal");
 
-  const modalFooter = modal.querySelector(".modal-footer");
+  const modalFooter = document.querySelector(".modal-footer");
   modalFooter.appendChild(button);
 }
 
@@ -98,7 +105,7 @@ function setConfirmationModal(eventID, partyID) {
   const message = "Are you sure you want to delete this watch party?";
 
   modal.querySelector(".modal-body").innerHTML = message;
-  modal.querySelector("#cancel-button").setAttribute("data-bs-target", `#${eventID}`);
+  modal.querySelector("#cancel-button").setAttribute("data-bs-target", "#eventDetailModal");
 
   modal.querySelector("a").addEventListener("click", () => {
     deleteWatchPartyEvent(partyID);
@@ -120,9 +127,6 @@ function createEventCards(eventDoc, partyMembers, isHost, party) {
   let eventCardTemplate = document.getElementById("eventCardTemplate");
   let eventListGroup = document.getElementById("eventList");
 
-  let modalTemplate = document.getElementById("modalTemplate");
-  let modalGroup = document.getElementById("body");
-
   // used to link card to modal
   const eventID = eventDoc.id;
 
@@ -138,30 +142,43 @@ function createEventCards(eventDoc, partyMembers, isHost, party) {
   // Create Event Card List Item
   let eventCardTemplateClone = eventCardTemplate.content.cloneNode(true);
   const eventCard = createEventListItem(eventCardTemplateClone, eventID,
-    type, formattedDate, time, venue, party, partyMembers.length);
+    type, formattedDate, time, venue, party, partyMembers, isHost);
 
   eventListGroup.appendChild(eventCard);
+}
+
+function setLocalStorage(eventID, type, date, time, venue, code, ) {
+  localStorage.setItem("eventID", eventID);
+  localStorage.setItem("type", type);
+  localStorage.setItem("date", date);
+  localStorage.setItem("time", time);
+  localStorage.setItem("venue", venue);
+  localStorage.setItem("code", code);
+}
+
+function setModalDetails(members, isHost) {
+  const type = localStorage.getItem("type");
+  const date = localStorage.getItem("date");
+  const time = localStorage.getItem("time");
+  const venue = localStorage.getItem("venue");
+  const code = localStorage.getItem("code");
 
   // Create corresponding Modal
-  let modal = modalTemplate.content.cloneNode(true);
-  modal.querySelector(".modal").setAttribute("id", eventID);
-  modal.querySelector(".modal-title").innerHTML = type;
-  modal.querySelector(".modal-date").innerHTML = formattedDate;
-  modal.querySelector(".modal-time").innerHTML = time;
-  modal.querySelector(".modal-venue").innerHTML = venue;
-  modal.querySelector(".modal-invite-code").innerHTML = code;
+  document.querySelector(".modal-title").innerHTML = type;
+  document.querySelector(".modal-date").innerHTML = date;
+  document.querySelector(".modal-time").innerHTML = time;
+  document.querySelector(".modal-venue").innerHTML = venue;
+  document.querySelector(".modal-invite-code").innerHTML = code;
 
-  modal.querySelector("#member-count").innerHTML = partyMembers.length;
+  document.querySelector("#member-count").innerHTML = members.length;
 
-  // Populates member list
-  populateMembers(partyMembers, modal);
+  // // Populates member list
+  populateMembers(members);
 
-  // Add delete button if the user is the host
+  // // Add delete button if the user is the host
   if (isHost) {
-    createDeleteButton(modal);
+    createDeleteButton();
   }
-
-  modalGroup.appendChild(modal);
 }
 
 /**
@@ -169,8 +186,11 @@ function createEventCards(eventDoc, partyMembers, isHost, party) {
  * @param {*} partyMembers an array of members
  * @param {*} modal the modal to insert into
  */
-function populateMembers(partyMembers, modal) {
-  let modalMember = modal.querySelector(".modal-members");
+function populateMembers(partyMembers) {
+  let modalMember = document.querySelector(".modal-members");
+
+  // Remove all children
+  modalMember.innerHTML = '';
 
   partyMembers.forEach(member => {
     let memberQuery = db.collection("users").doc(member);
@@ -206,7 +226,7 @@ function deleteWatchPartyEvent(partyID) {
  * @param {*} eventID the event list item to remove
  */
 function removeEventListItem(eventID) {
-  const listItem = document.querySelector(`[data-bs-target="#${eventID}"`);
+  const listItem = document.querySelector(`#${eventID}`);
   listItem.remove();
 }
 
