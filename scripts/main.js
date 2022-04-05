@@ -38,6 +38,7 @@ function populateEventList() {
             eventCard.querySelector("a").addEventListener("click", () => {
               openModal(eventID, type, formattedDate, time, venue);
             })
+            eventCard.querySelector(".image").src = `./images/${type}.png`;
             eventCard.querySelector("h4").innerHTML = type;
             eventCard.querySelector(".time").innerHTML = time;
             eventCard.querySelector(".venue").innerHTML = venue;
