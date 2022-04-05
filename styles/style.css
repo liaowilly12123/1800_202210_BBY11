@@ -1,3 +1,21 @@
+.bg-primary {
+  background-color: #009bee !important;
+  /* color: #22ffb8; */
+}
+
+.btn-primary {
+  background-color: #187ca9;
+  border: #187ca9;
+}
+
+.firebaseui-button {
+  background-color: #187ca9 !important;
+}
+
+.bi-plus-circle {
+  color: #12d001;
+}
+
 i {
   font-size: 1.5em;
 }

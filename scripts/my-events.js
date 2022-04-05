@@ -74,7 +74,7 @@ function createEventListItem(templateClone, eventID, type, date, time, venue, pa
   })
   if (isHost) {
 
-    templateClone.querySelector("a").style.backgroundColor = "yellow";
+    templateClone.querySelector("a").style.backgroundColor = "#E6ECFF";
   }
 
 
