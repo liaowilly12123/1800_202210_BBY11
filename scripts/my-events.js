@@ -69,7 +69,7 @@ function createEventListItem(templateClone, eventID, type, date, time, venue, pa
   templateClone.querySelector(".members").innerHTML = members.length;
   templateClone.querySelector("a").addEventListener("click", () => {
     setConfirmationModal(eventID, party.id);
-    setLocalStorage(eventID, type, date, time, venue, party.data().code);
+    setLocalStorage(eventID, type, date, time, venue, party.data().code, party.data().link);
     setModalDetails(members, isHost);
   })
   templateClone.querySelector(".image").src = `./images/${type}.png`;
@@ -162,13 +162,14 @@ function createEventCards(eventDoc, partyMembers, isHost, party) {
  * @param {*} venue the location of the event
  * @param {*} code the code for the event
  */
-function setLocalStorage(eventID, type, date, time, venue, code, ) {
+function setLocalStorage(eventID, type, date, time, venue, code, link) {
   localStorage.setItem("eventID", eventID);
   localStorage.setItem("type", type);
   localStorage.setItem("date", date);
   localStorage.setItem("time", time);
   localStorage.setItem("venue", venue);
   localStorage.setItem("code", code);
+  localStorage.setItem("link", link);
 }
 
 /**
@@ -182,12 +183,14 @@ function setModalDetails(members, isHost) {
   const time = localStorage.getItem("time");
   const venue = localStorage.getItem("venue");
   const code = localStorage.getItem("code");
+  const link = localStorage.getItem("link");
 
   // Create corresponding Modal
   document.querySelector(".modal-title").innerHTML = type;
   document.querySelector(".modal-date").innerHTML = date;
   document.querySelector(".modal-time").innerHTML = time;
   document.querySelector(".modal-venue").innerHTML = venue;
+  document.querySelector(".viewing-Link").innerHTML = link;
   document.querySelector("#code").value = code;
   // document.querySelector(".code").addEventListener("click", () => {
   //   copyClipboard();
