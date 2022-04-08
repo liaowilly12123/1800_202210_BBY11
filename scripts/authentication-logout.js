@@ -1,3 +1,7 @@
+/**
+ * The signOutSuccessWithAuthResult() ends seesion for the user.
+ * There are no prameters.
+ */
 function signOutSuccessWithAuthResult() {
     console.log("Logout Function");
     firebase.auth().signOut()
