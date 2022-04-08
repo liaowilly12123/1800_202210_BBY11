@@ -13,8 +13,8 @@ function loadComponentToId(nodeId, component) {
  * Loads the skeleton of components into the page.
  */
 function loadSkeleton() {
-  loadComponentToId("#navbarPlaceholder", "./components/header.html");
-  loadComponentToId("#footerPlaceholder", "./components/footer.html");
+  loadComponentToId("#navbarPlaceholder", "./../components/header.html");
+  loadComponentToId("#footerPlaceholder", "./../components/footer.html");
 }
 
 loadSkeleton();

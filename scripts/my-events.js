@@ -72,7 +72,7 @@ function createEventListItem(templateClone, eventID, type, date, time, venue, pa
     setLocalStorage(eventID, type, date, time, venue, party.data().code, party.data().link);
     setModalDetails(members, isHost);
   })
-  templateClone.querySelector(".image").src = `./images/${type}.png`;
+  templateClone.querySelector(".image").src = `./../images/${type}.png`;
   if (isHost) {
 
     templateClone.querySelector("a").style.backgroundColor = "#E6ECFF";
@@ -258,6 +258,6 @@ function removeEventListItem(eventID) {
 }
 
 // load event-list-item.html template 
-loadComponentToId("#eventCardTemplate", "./components/joined-event-list-item.html");
-loadComponentToId("#confirmationModal", "./components/confirmation-modal.html");
+loadComponentToId("#eventCardTemplate", "./../components/joined-event-list-item.html");
+loadComponentToId("#confirmationModal", "./../components/confirmation-modal.html");
 populateMyEventsList();

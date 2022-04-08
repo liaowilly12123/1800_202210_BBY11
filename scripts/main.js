@@ -42,7 +42,7 @@ function populateEventList() {
             eventCard.querySelector("a").addEventListener("click", () => {
               openModal(eventID, type, formattedDate, time, venue);
             })
-            eventCard.querySelector(".image").src = `./images/${type}.png`;
+            eventCard.querySelector(".image").src = `./../images/${type}.png`;
             eventCard.querySelector("h4").innerHTML = type;
             eventCard.querySelector(".time").innerHTML = time;
             eventCard.querySelector(".venue").innerHTML = venue;
@@ -141,7 +141,7 @@ function resetList() {
 }
 
 // load event-list-item.html template 
-loadComponentToId("#eventCardTemplate", "./components/event-list-item.html");
+loadComponentToId("#eventCardTemplate", "./../components/event-list-item.html");
 setDate();
 populateEventList();
 
@@ -178,7 +178,7 @@ function createWatchParty() {
         link: link,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
-        window.location.href = "/display-code.html"; //new line added
+        window.location.href = "/pages/display-code.html"; //new line added
       })
     } else {
       // No user is signed in.
