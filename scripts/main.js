@@ -2,6 +2,10 @@
 let currentDate = new Date("2022-02-17 00:00");
 let startDateBound = new Date("2022-02-17 00:00");
 
+/**
+ * Populates the Olympics event list based on the date. 
+ * The events are also ordered by the date and time.
+ */
 function populateEventList() {
   let eventCardTemplate = document.getElementById("eventCardTemplate");
   let eventListGroup = document.getElementById("eventList");
@@ -50,11 +54,28 @@ function populateEventList() {
     })
 }
 
+/**
+ * Sets up to open a modal. Sets the relevant data
+ * the local storage before setting the modal details.
+ * @param {*} eventID The event ID
+ * @param {*} type The event Type
+ * @param {*} date The event Date
+ * @param {*} time The event Time
+ * @param {*} venue The event Venue
+ */
 function openModal(eventID, type, date, time, venue) {
   setLocalStorage(eventID, type, date, time, venue);
   setModalDetails();
 }
 
+/**
+ * Sets the specified values to local storage.
+ * @param {*} eventID The event ID
+ * @param {*} type The event Type
+ * @param {*} date The event Date
+ * @param {*} time The event Time
+ * @param {*} venue The event Venue
+ */
 function setLocalStorage(eventID, type, date, time, venue) {
   localStorage.setItem("eventID", eventID);
   localStorage.setItem("type", type);
@@ -63,6 +84,10 @@ function setLocalStorage(eventID, type, date, time, venue) {
   localStorage.setItem("venue", venue);
 }
 
+/**
+ * Sets the correct data to the modal.
+ * The data is grabbed from local storage.
+ */
 function setModalDetails() {
   const type = localStorage.getItem("type");
   const date = localStorage.getItem("date");
@@ -75,12 +100,20 @@ function setModalDetails() {
   document.querySelector(".modal-venue").innerHTML = venue;
 }
 
+/**
+ * This sets the current day to the next and repopulates
+ * the event list with data for the next day.
+ */
 function nextDay() {
   currentDate.setDate(currentDate.getDate()+1);
   setDate();
   populateEventList();
 }
 
+/**
+ * This sets the current day to the previous and repopulates
+ * the event list with data for the previous day.
+ */
 function previousDay() {
   currentDate.setDate(currentDate.getDate()-1);
 
@@ -91,11 +124,17 @@ function previousDay() {
   populateEventList();
 }
 
+/**
+ * Changes the date that is displayed above the events list.
+ */
 function setDate() {
   const dateElement = document.querySelector("#todays-date");
   dateElement.innerHTML = formatDate(currentDate);
 }
 
+/**
+ * Empties the event list.
+ */
 function resetList() {
   const listElement = document.querySelector("#eventList");
   listElement.innerHTML = "";
@@ -106,6 +145,10 @@ loadComponentToId("#eventCardTemplate", "./components/event-list-item.html");
 setDate();
 populateEventList();
 
+/**
+ * Creates a watch party. Grabs relevant data from the DOM and
+ * sends it to firebase to create a party.
+ */
 function createWatchParty() {
   var eventDate = document.getElementById("watchPartyStartDate").value;
   var eventTime = document.getElementById("watchPartyStartTime").value;

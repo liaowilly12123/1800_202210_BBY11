@@ -1,4 +1,8 @@
-// Formats Date Object into `month day`
+/**
+ * Formats Date Object into "month day"
+ * @param {*} date a Date object
+ * @returns formattedDate 
+ */
 function formatDate(date) {
   const monthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
@@ -12,7 +16,11 @@ function formatDate(date) {
   return formattedDate;
 }
 
-// Formats Date Object into `hour:minute am/pm`
+/**
+ * Formats Date Object into "hour:minute am/pm"
+ * @param {*} date a Date object
+ * @returns formattedTime
+ */
 function formatTime(date) {
   // convert hour from 24h to 12h format
   let hour = date.getHours();
@@ -30,6 +38,10 @@ function formatTime(date) {
   return time;
 }
 
+/**
+ * Redirects the user to the specified location.
+ * @param {*} location location to redirect
+ */
 function redirect(location) {
   window.location.href = location;
 }

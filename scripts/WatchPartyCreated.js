@@ -1,3 +1,7 @@
+/**
+ * Grabs information from the DOM and sends it to Firebase 
+ * to create a party.
+ */
 function createWatchParty() {
     console.log("in")
     var eventDate = document.getElementById("eventDate").value;

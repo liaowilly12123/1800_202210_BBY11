@@ -1,3 +1,6 @@
+/**
+ * Updates a party in firebase to add a user to the list of members.
+ */
 function addWatchPartyMember() {
   firebase.auth().onAuthStateChanged(user => {
     if (user) {
@@ -30,21 +33,22 @@ function addWatchPartyMember() {
   })
 }
 
+/**
+ * Validates the invite code.
+ */
 function validateCode() {
   let code = document.getElementById("partyInviteCode").value.trim();
 
   if (code) {
-    console.log(code);
     addWatchPartyMember();
   } else {
     displayCodeInvalidMessage();
   }
 }
 
+/**
+ * Displays an error message to the user for invalid code.
+ */
 function displayCodeInvalidMessage() {
   document.querySelector("#invalid-code").style.display = "block";
-}
-
-function alertInvalidCode(message) {
-  alert(message);
 }

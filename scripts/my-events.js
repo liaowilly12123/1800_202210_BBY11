@@ -257,30 +257,6 @@ function removeEventListItem(eventID) {
   listItem.remove();
 }
 
-// const parties = [{
-//   "code": 123456,
-//   "host": "QjpOITe07POuShC8nmzHcJaAafk1",
-//   "eventId": "cfrqBKRJ8yt5c9touCBM",
-//   "members": ["QjpOITe07POuShC8nmzHcJaAafk1"],
-// }]
-
-// function createParty() {
-//   let eventsRef = db.collection("testParties");
-//   parties.forEach(eventEntry => {
-//     const code = eventEntry.code;
-//     const host = eventEntry.host;
-//     const eventId = eventEntry.eventId;
-//     const members = eventEntry.members;
-
-//     eventsRef.add({
-//       code: code,
-//       host: host,
-//       eventId: eventId,
-//       members: members
-//     })
-//   })
-// }
-
 // load event-list-item.html template 
 loadComponentToId("#eventCardTemplate", "./components/joined-event-list-item.html");
 loadComponentToId("#confirmationModal", "./components/confirmation-modal.html");
